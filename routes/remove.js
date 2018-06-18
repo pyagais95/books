@@ -1,32 +1,44 @@
-const express = require('express');
-const router = express.Router();
+var express = require('express');
+var router = express.Router();
 var fs = require('fs')
 
-module.exports = function(app){
-	router.get('/:id', function(req, res){
-		fs.readFile('db.json', function(err, data){
-			if(err){
+module.exports = function(app, db) {
+
+	router.get('/book/:id', function(req, res) {
+		fs.readFile('./db.json', function(err, data) {
+			if (err) {
 				res.send({
-					"message": "can't read file",
-					"status": "fail"
+					message: "Can not read file",
+					status: false
 				})
-			}
-			var json = JSON.parse(data)
-			var found = false
-			for(let elem of json) {
-				if(elem.id == req.params.id){
-					found = true
-					elem.status = "succes"
-					delete json[req.params.id-1]
+			} else {
+				var json = JSON.parse(data).posts
+				var newJson = {
+					posts: []
+				}
+				for (let elem of json) {
+					if(elem.id != req.params.id) {
+						newJson.posts.push(elem)
 				}
 			}
-			if(!found){
-				res.send({
-					"message": "no such id",
-					"status": "fail"
+
+			fs.writeFile('./db.json', JSON.stringify(newJson), function(err, data) {
+				if (err) {
+					res.send({
+						message: "can't remove book",
+						status: false
+					})
+				} else {
+					res.send({
+						message: "book removed",
+						status: true
 				})
-			}
-		})
-	});
-	app.use('/remove', router)
+				
+			};
+			
+		});
+	}
+})
+})
+	app.use('/remove', router);
 };

@@ -3,8 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var glob = require('glob')
-
+var glob = require('glob');
 var app = express();
 
 // view engine setup
@@ -17,8 +16,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+/* Configure routes */
 var routes = glob.sync('./routes/*.js');
-routes.forEach(function(route){
+routes.forEach(function(route) {
 	require(route)(app);
 })
 
