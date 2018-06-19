@@ -14,6 +14,9 @@ module.exports = function(app, db) {
 	router.post('/', function(req, res) {
 		var newBook = {}
 		var count = 0
+		var newJson = {
+			posts: []
+		}
 
 		fs.readFile('./db.json', function (err, data) {
 			if(err) {
@@ -31,17 +34,18 @@ module.exports = function(app, db) {
 					status: false
 						})
 					} else {
+						newJson.posts.push(elem)
 						count++
 					}
 				}
 
 				newBook.id = count+1
-				newBook.author = req.body.author
 				newBook.title = req.body.title
+				newBook.author = req.body.author
 				newBook.description = req.body.description
-				json.push(newBook)
+				newJson.posts.push(newBook)
 
-					fs.writeFile('./db.json', JSON.stringify(json), function(err, data) {
+					fs.writeFile('./db.json', JSON.stringify(newJson), function(err, data) {
 						if (err) {
 							res.send({
 								message: "can't add book",
